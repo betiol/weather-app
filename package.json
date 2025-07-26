@@ -18,5 +18,10 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
-} 
+  ],
+  "dependencies": {
+    "@react-google-maps/api": "^2.20.7",
+    "react-icons": "^5.5.0",
+    "web": "^0.0.2"
+  }
+}
