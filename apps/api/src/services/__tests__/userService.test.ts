@@ -1,32 +1,38 @@
-import { describe, it, expect, beforeEach, jest } from 'bun:test';
+import { describe, it, expect, beforeEach, mock } from 'bun:test';
 import { UserService } from '../userService';
-import { WeatherService } from '../weatherService';
 
-jest.mock('../../config/firebase', () => ({
-  db: {
-    ref: jest.fn().mockReturnValue({
-      set: jest.fn(),
-      once: jest.fn(),
-      remove: jest.fn(),
-    }),
-  },
+const mockDb = {
+  ref: mock().mockReturnValue({
+    set: mock(),
+    once: mock(),
+    remove: mock(),
+  }),
+};
+
+mock.module('../../config/firebase', () => ({
+  db: mockDb,
   USERS_REF: 'users',
 }));
 
-jest.mock('../weatherService', () => ({
-  WeatherService: {
-    getLocationFromZipCode: jest.fn(),
-  },
+const mockWeatherService = {
+  getLocationFromZipCode: mock(),
+};
+
+mock.module('../weatherService', () => ({
+  WeatherService: mockWeatherService,
 }));
 
 global.crypto = {
-  randomUUID: jest.fn(() => 'mock-uuid-123'),
+  randomUUID: mock(() => 'mock-uuid-123'),
 } as any;
 
 describe('UserService', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    (WeatherService.getLocationFromZipCode as any).mockResolvedValue({
+    mockDb.ref.mockClear();
+    mockWeatherService.getLocationFromZipCode.mockClear();
+    (global.crypto.randomUUID as any).mockClear();
+    
+    mockWeatherService.getLocationFromZipCode.mockResolvedValue({
       latitude: 40.7128,
       longitude: -74.0060,
       timezone: 'UTC-5',
@@ -55,7 +61,7 @@ describe('UserService', () => {
     });
 
     it('should throw error when weather service fails', async () => {
-      (WeatherService.getLocationFromZipCode as any).mockRejectedValue(
+      mockWeatherService.getLocationFromZipCode.mockRejectedValue(
         new Error('Invalid zip code')
       );
 
@@ -83,16 +89,14 @@ describe('UserService', () => {
         updatedAt: '2023-01-01T00:00:00.000Z',
       };
 
-      const { db } = require('../../config/firebase');
-      db.ref().once.mockResolvedValue({ val: () => mockUser });
+      mockDb.ref().once.mockResolvedValue({ val: () => mockUser });
 
       const result = await UserService.getUserById('123');
       expect(result).toEqual(mockUser);
     });
 
     it('should return null when user not found', async () => {
-      const { db } = require('../../config/firebase');
-      db.ref().once.mockResolvedValue({ val: () => null });
+      mockDb.ref().once.mockResolvedValue({ val: () => null });
 
       const result = await UserService.getUserById('nonexistent');
       expect(result).toBeNull();
