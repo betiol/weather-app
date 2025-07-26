@@ -1,20 +1,16 @@
 import { initTRPC, TRPCError } from '@trpc/server';
 import { z } from 'zod';
+import { AuthService } from './services/authService';
 
-export const createContext = () => {
-  return {};
-};
+export const createContext = () => ({});
 
-export type Context = Awaited<ReturnType<typeof createContext>>;
-
-const t = initTRPC.context<Context>().create({
+const t = initTRPC.context<typeof createContext>().create({
   errorFormatter({ shape, error }) {
     return {
       ...shape,
       data: {
         ...shape.data,
-        zodError:
-          error.cause instanceof z.ZodError ? error.cause.flatten() : null,
+        zodError: error.cause instanceof z.ZodError ? error.cause.flatten() : null,
       },
     };
   },
@@ -23,14 +19,33 @@ const t = initTRPC.context<Context>().create({
 export const router = t.router;
 export const publicProcedure = t.procedure;
 
+export const protectedProcedure = publicProcedure
+  .input((input: any) => ({
+    ...input,
+    token: z.string().min(1, 'Authentication token is required').parse(input.token)
+  }))
+  .use(async ({ input, next }) => {
+    const user = await AuthService.verifyToken(input.token);
+    if (!user) {
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: 'Invalid or expired token',
+      });
+    }
+    
+    return next({
+      ctx: { user },
+    });
+  });
+
 export const createTRPCError = (code: string, message: string) => {
-  const statusCode = code === 'USER_NOT_FOUND' ? 404 : 
-                     code === 'INVALID_ZIP_CODE' ? 400 :
-                     code === 'WEATHER_API_ERROR' ? 502 : 500;
-  
+  const errorCode = code === 'USER_NOT_FOUND' ? 'NOT_FOUND' :
+    code === 'INVALID_ZIP_CODE' ? 'BAD_REQUEST' :
+    code === 'WEATHER_API_ERROR' ? 'INTERNAL_SERVER_ERROR' : 
+    'INTERNAL_SERVER_ERROR';
+
   throw new TRPCError({
-    code: statusCode === 404 ? 'NOT_FOUND' : 
-          statusCode === 400 ? 'BAD_REQUEST' : 'INTERNAL_SERVER_ERROR',
+    code: errorCode,
     message,
   });
 }; 

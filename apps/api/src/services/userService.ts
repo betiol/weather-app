@@ -1,13 +1,14 @@
-import { db, USERS_REF } from '../config/firebase';
+import { db } from '../config/firebase';
 import { WeatherService } from './weatherService';
 import type { User, CreateUser, UpdateUser } from '@weather/shared-types';
 
 export class UserService {
-  static async createUser(userData: CreateUser): Promise<User> {
+  static async createUser(userData: CreateUser, userAuthId: string): Promise<User> {
     try {
       const locationData = await WeatherService.getLocationFromZipCode(userData.zipCode);
 
-      const id = crypto.randomUUID();
+      const userRef = db.ref(`users/${userAuthId}/resources`).push();
+      const id = userRef.key!;
       const now = new Date().toISOString();
       
       const user: User = {
@@ -21,7 +22,7 @@ export class UserService {
         updatedAt: now,
       };
 
-      await db.ref(`${USERS_REF}/${id}`).set(user);
+      await userRef.set(user);
       
       return user;
     } catch (error) {
@@ -29,9 +30,9 @@ export class UserService {
     }
   }
 
-  static async getAllUsers(): Promise<User[]> {
+  static async getAllUsers(userAuthId: string): Promise<User[]> {
     try {
-      const snapshot = await db.ref(USERS_REF).once('value');
+      const snapshot = await db.ref(`users/${userAuthId}/resources`).once('value');
       const data = snapshot.val();
       
       if (!data) return [];
@@ -42,9 +43,9 @@ export class UserService {
     }
   }
 
-  static async getUserById(id: string): Promise<User | null> {
+  static async getUserById(id: string, userAuthId: string): Promise<User | null> {
     try {
-      const snapshot = await db.ref(`${USERS_REF}/${id}`).once('value');
+      const snapshot = await db.ref(`users/${userAuthId}/resources/${id}`).once('value');
       const user = snapshot.val();
       
       return user ? (user as User) : null;
@@ -53,9 +54,9 @@ export class UserService {
     }
   }
 
-  static async updateUser(updateData: UpdateUser): Promise<User> {
+  static async updateUser(id: string, updateData: Omit<UpdateUser, 'id'>, userAuthId: string): Promise<User> {
     try {
-      const existingUser = await this.getUserById(updateData.id);
+      const existingUser = await this.getUserById(id, userAuthId);
       
       if (!existingUser) {
         throw new Error('User not found');
@@ -79,7 +80,7 @@ export class UserService {
         updatedAt: new Date().toISOString(),
       };
 
-      await db.ref(`${USERS_REF}/${updateData.id}`).set(updatedUser);
+      await db.ref(`users/${userAuthId}/resources/${id}`).set(updatedUser);
       
       return updatedUser;
     } catch (error) {
@@ -87,15 +88,16 @@ export class UserService {
     }
   }
 
-  static async deleteUser(id: string): Promise<void> {
+  static async deleteUser(id: string, userAuthId: string): Promise<boolean> {
     try {
-      const existingUser = await this.getUserById(id);
+      const existingUser = await this.getUserById(id, userAuthId);
       
       if (!existingUser) {
         throw new Error('User not found');
       }
 
-      await db.ref(`${USERS_REF}/${id}`).remove();
+      await db.ref(`users/${userAuthId}/resources/${id}`).remove();
+      return true;
     } catch (error) {
       throw new Error('Failed to delete user');
     }

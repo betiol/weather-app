@@ -15,11 +15,10 @@ export class WeatherService {
       throw new Error('OpenWeatherMap API key not configured');
     }
 
-    console.log(OPENWEATHER_API_KEY)
-
     const url = `${OPENWEATHER_BASE_URL}?zip=${zipCode}&appid=${OPENWEATHER_API_KEY}`;
 
     console.log(url)
+
     
     try {
       const response = await fetch(url);

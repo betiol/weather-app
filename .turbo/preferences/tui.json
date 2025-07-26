@@ -1,4 +1,4 @@
 {
   "is_task_list_visible": true,
-  "active_task": "@weather/web#test"
+  "active_task": "@weather/shared-types#build"
 }

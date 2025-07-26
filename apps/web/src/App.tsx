@@ -1,13 +1,17 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Users, Plus } from 'lucide-react';
+import { Plus, LogOut } from 'lucide-react';
+import { AuthPage } from './components/AuthPage';
 import UserList from './components/UserList';
 import UserForm from './components/UserForm';
+import { useAuth } from './contexts/AuthContext';
 import type { User } from '@weather/shared-types';
 
 function App() {
   const [showForm, setShowForm] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
+  
+  const { user, loading, logout } = useAuth();
 
   const handleCreateUser = () => {
     setEditingUser(null);
@@ -24,28 +28,51 @@ function App() {
     setEditingUser(null);
   };
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-900 to-indigo-900 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+          <p className="text-white text-lg">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) return <AuthPage />
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-      <div className="container mx-auto px-4 py-8">
-        <motion.header
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
-        >
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="p-3 bg-blue-600 rounded-xl">
-              <Users className="w-8 h-8 text-white" />
+      <header className="bg-white/10 backdrop-blur-xl border-b border-white/20 sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <h1 className="text-xl font-bold text-gray-900 dark:text-white">Weather App</h1>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Welcome, {user.name || user.email}
+              </p>
             </div>
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
-              weather
-            </h1>
+            
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+            >
+              <LogOut className="w-4 h-4" />
+              Logout
+            </button>
           </div>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Manage users with real-time location data from their zip codes
-          </p>
-          
-        </motion.header>
-
+        </div>
+      </header>
+      
+      <div className="container mx-auto px-4 py-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

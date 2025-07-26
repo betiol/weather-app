@@ -1,13 +1,14 @@
 import { z } from 'zod';
-import { router, publicProcedure, createTRPCError } from '../trpc';
+import { router, protectedProcedure, createTRPCError } from '../trpc';
 import { UserService } from '../services/userService';
 import { CreateUserSchema, UpdateUserSchema } from '@weather/shared-types';
 
 export const usersRouter = router({
-  getAll: publicProcedure
-    .query(async () => {
+  getAll: protectedProcedure
+    .input(z.object({ token: z.string() }))
+    .query(async ({ ctx }) => {
       try {
-        return await UserService.getAllUsers();
+        return await UserService.getAllUsers(ctx.user.uid);
       } catch (error) {
         throw createTRPCError(
           'INTERNAL_ERROR',
@@ -16,11 +17,11 @@ export const usersRouter = router({
       }
     }),
 
-  getById: publicProcedure
-    .input(z.object({ id: z.string() }))
-    .query(async ({ input }) => {
+  getById: protectedProcedure
+    .input(z.object({ id: z.string(), token: z.string() }))
+    .query(async ({ input, ctx }) => {
       try {
-        const user = await UserService.getUserById(input.id);
+        const user = await UserService.getUserById(input.id, ctx.user.uid);
         if (!user) {
           throw createTRPCError('USER_NOT_FOUND', 'User not found');
         }
@@ -36,11 +37,12 @@ export const usersRouter = router({
       }
     }),
 
-  create: publicProcedure
-    .input(CreateUserSchema)
-    .mutation(async ({ input }) => {
+  create: protectedProcedure
+    .input(CreateUserSchema.extend({ token: z.string() }))
+    .mutation(async ({ input, ctx }) => {
       try {
-        return await UserService.createUser(input);
+        const { token, ...userData } = input;
+        return await UserService.createUser(userData, ctx.user.uid);
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to create user';
         
@@ -54,16 +56,21 @@ export const usersRouter = router({
       }
     }),
 
-  update: publicProcedure
-    .input(UpdateUserSchema)
-    .mutation(async ({ input }) => {
+  update: protectedProcedure
+    .input(UpdateUserSchema.extend({ token: z.string() }))
+    .mutation(async ({ input, ctx }) => {
       try {
-        return await UserService.updateUser(input);
+        const { token, ...updateData } = input;
+        const updatedUser = await UserService.updateUser(updateData.id, updateData, ctx.user.uid);
+        if (!updatedUser) {
+          throw createTRPCError('USER_NOT_FOUND', 'User not found');
+        }
+        return updatedUser;
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to update user';
         
         if (errorMessage.includes('User not found')) {
-          throw createTRPCError('USER_NOT_FOUND', errorMessage);
+          throw createTRPCError('USER_NOT_FOUND', 'User not found');
         } else if (errorMessage.includes('Invalid zip code')) {
           throw createTRPCError('INVALID_ZIP_CODE', errorMessage);
         } else if (errorMessage.includes('Weather API')) {
@@ -74,17 +81,20 @@ export const usersRouter = router({
       }
     }),
 
-  delete: publicProcedure
-    .input(z.object({ id: z.string() }))
-    .mutation(async ({ input }) => {
+  delete: protectedProcedure
+    .input(z.object({ id: z.string(), token: z.string() }))
+    .mutation(async ({ input, ctx }) => {
       try {
-        await UserService.deleteUser(input.id);
+        const success = await UserService.deleteUser(input.id, ctx.user.uid);
+        if (!success) {
+          throw createTRPCError('USER_NOT_FOUND', 'User not found');
+        }
         return { success: true };
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to delete user';
         
         if (errorMessage.includes('User not found')) {
-          throw createTRPCError('USER_NOT_FOUND', errorMessage);
+          throw createTRPCError('USER_NOT_FOUND', 'User not found');
         }
         
         throw createTRPCError('INTERNAL_ERROR', errorMessage);

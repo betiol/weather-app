@@ -1,5 +1,6 @@
 import { initializeApp, cert, getApps } from 'firebase-admin/app';
 import { getDatabase } from 'firebase-admin/database';
+import { getAuth } from 'firebase-admin/auth';
 
 const firebaseConfig = {
   projectId: process.env.FIREBASE_PROJECT_ID,
@@ -16,4 +17,5 @@ if (!getApps().length) {
 }
 
 export const db = getDatabase();
+export const auth = getAuth();
 export const USERS_REF = 'users'; 
