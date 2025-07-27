@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Lock, User, Eye, EyeOff, Cloud } from 'lucide-react';
+import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuth } from '../contexts/AuthContext';
+import Logo from './Logo';
 
 const LoginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -67,25 +68,20 @@ export const AuthPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-blue-900 to-indigo-900 flex items-center justify-center p-4 relative">
-      <div className="relative w-full max-w-md z-10">
+    <motion.div className="min-h-screen w-full bg-gradient-to-br from-blue-900 to-indigo-900 flex items-center justify-center p-4 relative">
+      <motion.div className="relative w-full max-w-md z-10">
         <motion.div className="bg-white/10 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/20 w-full">
-          <div className="text-center mb-8">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: "spring", duration: 0.6 }}
-              className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4"
-            >
-              <Cloud className="w-8 h-8 text-white" />
-            </motion.div>
-            <h1 className="text-3xl font-bold text-white mb-2">Weather App</h1>
-            <p className="text-blue-200">
-              {isLogin ? 'Welcome back!' : 'Create your account'}
-            </p>
-          </div>
+          <Logo centered={true} size="lg" />
+          <motion.p 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="text-blue-200 text-center mb-8"
+          >
+            {isLogin ? 'Welcome back!' : 'Create your account'}
+          </motion.p>
 
-          <form onSubmit={(isLogin ? loginForm : registerForm).handleSubmit(onSubmit)} className="space-y-6">
+          <motion.form onSubmit={(isLogin ? loginForm : registerForm).handleSubmit(onSubmit)} className="space-y-6">
             <AnimatePresence mode="wait">
               {!isLogin && (
                 <motion.div
@@ -94,7 +90,7 @@ export const AuthPage: React.FC = () => {
                   exit={{ opacity: 0, height: 0 }}
                   className="space-y-2"
                 >
-                  <div className="relative">
+                  <motion.div className="relative">
                     <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-300" />
                     <input
                       type="text"
@@ -106,7 +102,7 @@ export const AuthPage: React.FC = () => {
                           : 'border-white/20'
                       }`}
                     />
-                  </div>
+                  </motion.div>
                   {registerForm.formState.errors.name && (
                     <p className="text-red-300 text-sm ml-1">
                       {registerForm.formState.errors.name.message}
@@ -116,8 +112,8 @@ export const AuthPage: React.FC = () => {
               )}
             </AnimatePresence>
 
-            <div className="space-y-2">
-              <div className="relative">
+            <motion.div className="space-y-2">
+              <motion.div className="relative">
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-300" />
                 <input
                   type="email"
@@ -129,16 +125,16 @@ export const AuthPage: React.FC = () => {
                       : 'border-white/20'
                   }`}
                 />
-              </div>
+              </motion.div>
               {(isLogin ? loginForm.formState.errors.email : registerForm.formState.errors.email) && (
                 <p className="text-red-300 text-sm ml-1">
                   {(isLogin ? loginForm.formState.errors.email?.message : registerForm.formState.errors.email?.message)}
                 </p>
               )}
-            </div>
+            </motion.div>
 
-            <div className="space-y-2">
-              <div className="relative">
+            <motion.div className="space-y-2">
+              <motion.div className="relative">
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-300" />
                 <input
                   type={showPassword ? 'text' : 'password'}
@@ -150,20 +146,20 @@ export const AuthPage: React.FC = () => {
                       : 'border-white/20'
                   }`}
                 />
-                <button
+                <motion.button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-300 hover:text-white transition-colors"
                 >
                   {showPassword ? <EyeOff /> : <Eye />}
-                </button>
-              </div>
+                </motion.button>
+              </motion.div>
               {(isLogin ? loginForm.formState.errors.password : registerForm.formState.errors.password) && (
                 <p className="text-red-300 text-sm ml-1">
                   {(isLogin ? loginForm.formState.errors.password?.message : registerForm.formState.errors.password?.message)}
                 </p>
               )}
-            </div>
+            </motion.div>
 
             <AnimatePresence mode="wait">
               {!isLogin && (
@@ -173,7 +169,7 @@ export const AuthPage: React.FC = () => {
                   exit={{ opacity: 0, height: 0 }}
                   className="space-y-2"
                 >
-                  <div className="relative">
+                  <motion.div className="relative">
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-300" />
                     <input
                       type={showPassword ? 'text' : 'password'}
@@ -185,7 +181,7 @@ export const AuthPage: React.FC = () => {
                           : 'border-white/20'
                       }`}
                     />
-                  </div>
+                  </motion.div>
                   {registerForm.formState.errors.confirmPassword && (
                     <p className="text-red-300 text-sm ml-1">
                       {registerForm.formState.errors.confirmPassword.message}
@@ -213,31 +209,31 @@ export const AuthPage: React.FC = () => {
               whileTap={{ scale: 0.98 }}
             >
               {loading ? (
-                <div className="flex items-center justify-center space-x-2">
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                <motion.div className="flex items-center justify-center space-x-2">
+                  <motion.div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></motion.div>
                   <span>{isLogin ? 'Signing in...' : 'Creating account...'}</span>
-                </div>
+                </motion.div>
               ) : (
-                <div className="flex items-center justify-center space-x-2">
+                <motion.div className="flex items-center justify-center space-x-2">
                   <span>{isLogin ? 'Sign In' : 'Create Account'}</span>
-                </div>
+                </motion.div>
               )}
             </motion.button>
-          </form>
+          </motion.form>
 
-          <div className="text-center mt-6">
+          <motion.div className="text-center mt-6">
             <p className="text-blue-200 mb-2">
               {isLogin ? "Don't have an account?" : 'Already have an account?'}
             </p>
-            <button
+            <motion.button
               onClick={toggleMode}
               className="text-blue-400 hover:text-white font-semibold transition-colors"
             >
               {isLogin ? 'Create Account' : 'Sign In'}
-            </button>
-          </div>
+            </motion.button>
+          </motion.div>
         </motion.div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }; 

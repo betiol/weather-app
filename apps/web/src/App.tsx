@@ -48,43 +48,43 @@ function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-900 to-indigo-900 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
-          <p className="text-white text-lg">Loading...</p>
-        </div>
-      </div>
+      <motion.div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <motion.div className="flex flex-col items-center gap-4">
+          <motion.div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></motion.div>
+          <p className="text-gray-600 dark:text-gray-400 text-lg">Loading...</p>
+        </motion.div>
+      </motion.div>
     );
   }
 
   if (!user) return <AuthPage />
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+    <motion.div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header
         userName={user.name}
         userEmail={user.email}
         onLogout={handleLogout}
       />
       
-      <div className="w-full px-4 py-4">
+      <motion.div className="w-full px-4 py-4">
         <motion.main
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
           className="max-w-7xl mx-auto"
         >
-          <div className="flex justify-end mb-4">
+          <motion.div className="flex justify-end mb-4">
             <motion.button
               onClick={handleCreateUser}
-              className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors shadow-md hover:shadow-lg"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm"
             >
               <Plus className="w-4 h-4" />
-              Add User
+              Add New User
             </motion.button>
-          </div>
+          </motion.div>
 
           <UserMap users={users} />
           
@@ -99,8 +99,8 @@ function App() {
             />
           )}
         </AnimatePresence>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 

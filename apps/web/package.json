@@ -23,7 +23,9 @@
     "lucide-react": "^0.447.0",
     "firebase": "^10.14.1",
     "@weather/shared-types": "workspace:*",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "google-map-react": "^2.2.1",
+    "@types/google-map-react": "^2.1.10"
   },
   "devDependencies": {
     "@types/react": "^18.3.11",
