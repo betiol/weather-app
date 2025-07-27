@@ -4,6 +4,7 @@ import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import toast from 'react-hot-toast';
 import { useAuth } from '../contexts/AuthContext';
 import Logo from './Logo';
 
@@ -29,7 +30,6 @@ export const AuthPage: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [submitError, setSubmitError] = useState('');
 
   const { signIn, signUp } = useAuth();
 
@@ -44,17 +44,19 @@ export const AuthPage: React.FC = () => {
   });
 
   const onSubmit = async (data: LoginData | RegisterData) => {
-    setSubmitError('');
     setLoading(true);
 
     try {
       if (isLogin) {
         await signIn(data as LoginData);
+        toast.success('Welcome back!');
       } else {
         await signUp(data as RegisterData);
+        toast.success('Account created successfully!');
       }
     } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : 'An error occurred');
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred';
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -62,7 +64,6 @@ export const AuthPage: React.FC = () => {
 
   const toggleMode = () => {
     setIsLogin(!isLogin);
-    setSubmitError('');
     loginForm.reset();
     registerForm.reset();
   };
@@ -191,15 +192,6 @@ export const AuthPage: React.FC = () => {
               )}
             </AnimatePresence>
 
-            {submitError && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-red-500/20 border border-red-500/30 rounded-xl p-4 text-red-200 text-sm"
-              >
-                {submitError}
-              </motion.div>
-            )}
 
             <motion.button
               type="submit"

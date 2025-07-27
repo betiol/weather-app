@@ -86,7 +86,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       await signInWithEmailAndPassword(auth, data.email, data.password);
     } catch (error: any) {
-      throw new Error(error.message || 'Failed to sign in');
+      const errorCode = error.code;
+      let errorMessage = 'Failed to sign in';
+      
+      switch (errorCode) {
+        case 'auth/invalid-credential':
+          errorMessage = 'Invalid email or password. Please check your credentials and try again.';
+          break;
+        case 'auth/user-not-found':
+          errorMessage = 'No account found with this email address.';
+          break;
+        case 'auth/wrong-password':
+          errorMessage = 'Incorrect password. Please try again.';
+          break;
+        case 'auth/invalid-email':
+          errorMessage = 'Invalid email address format.';
+          break;
+        case 'auth/user-disabled':
+          errorMessage = 'This account has been disabled.';
+          break;
+        case 'auth/too-many-requests':
+          errorMessage = 'Too many failed attempts. Please try again later.';
+          break;
+        default:
+          errorMessage = error.message || 'Failed to sign in';
+      }
+      
+      throw new Error(errorMessage);
     }
   };
 
@@ -99,7 +125,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         displayName: data.name
       });
     } catch (error: any) {
-      throw new Error(error.message || 'Failed to create account');
+      const errorCode = error.code;
+      let errorMessage = 'Failed to create account';
+      
+      switch (errorCode) {
+        case 'auth/email-already-in-use':
+          errorMessage = 'An account with this email address already exists.';
+          break;
+        case 'auth/invalid-email':
+          errorMessage = 'Invalid email address format.';
+          break;
+        case 'auth/operation-not-allowed':
+          errorMessage = 'Email/password accounts are not enabled.';
+          break;
+        case 'auth/weak-password':
+          errorMessage = 'Password is too weak. Please choose a stronger password.';
+          break;
+        case 'auth/too-many-requests':
+          errorMessage = 'Too many requests. Please try again later.';
+          break;
+        default:
+          errorMessage = error.message || 'Failed to create account';
+      }
+      
+      throw new Error(errorMessage);
     }
   };
 

@@ -58,49 +58,53 @@ function App() {
     );
   }
 
-  if (!user) return <AuthPage />
-
   return (
-    <motion.div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Header
-        userName={user.name}
-        userEmail={user.email}
-        onLogout={handleLogout}
-      />
-      
-      <motion.div className="w-full px-4 py-4">
-        <motion.main
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="max-w-7xl mx-auto"
-        >
-          <motion.div className="flex justify-end mb-4">
-            <motion.button
-              onClick={handleCreateUser}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm"
-            >
-              <Plus className="w-4 h-4" />
-              Add New User
-            </motion.button>
-          </motion.div>
-
-          <UserMap users={users} />
+    <>
+      {!user ? (
+        <AuthPage />
+      ) : (
+        <motion.div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+          <Header
+            userName={user.name}
+            userEmail={user.email}
+            onLogout={handleLogout}
+          />
           
-          <UserList onEditUser={handleEditUser} />
-        </motion.main>
+          <motion.div className="w-full px-4 py-4">
+            <motion.main
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="max-w-7xl mx-auto"
+            >
+              <motion.div className="flex justify-end mb-4">
+                <motion.button
+                  onClick={handleCreateUser}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add New User
+                </motion.button>
+              </motion.div>
 
-        <AnimatePresence>
-          {showForm && (
-            <UserForm
-              user={editingUser}
-              onClose={handleCloseForm}
-            />
-          )}
-        </AnimatePresence>
-      </motion.div>
+              <UserMap users={users} />
+              
+              <UserList onEditUser={handleEditUser} />
+            </motion.main>
+
+            <AnimatePresence>
+              {showForm && (
+                <UserForm
+                  user={editingUser}
+                  onClose={handleCloseForm}
+                />
+              )}
+            </AnimatePresence>
+          </motion.div>
+        </motion.div>
+      )}
       
       <Toaster
         position="top-right"
@@ -122,7 +126,7 @@ function App() {
           },
         }}
       />
-    </motion.div>
+    </>
   );
 }
 

@@ -17,9 +17,6 @@ export class WeatherService {
 
     const url = `${OPENWEATHER_BASE_URL}?zip=${zipCode}&appid=${OPENWEATHER_API_KEY}`;
 
-    console.log(url)
-
-    
     try {
       const response = await fetch(url);
       

@@ -22,10 +22,6 @@ interface MarkerProps {
 }
 
 const Marker: React.FC<MarkerProps> = ({ user, onClick, lat, lng }) => {
-  useEffect(() => {
-    console.log('Rendering marker for user:', user.name, 'at:', { lat, lng });
-  }, [user, lat, lng]);
-
   return (
     <div
       onClick={(e) => {
