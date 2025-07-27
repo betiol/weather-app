@@ -14,6 +14,9 @@ This project is a full-stack application that manages user locations using OpenW
 - ✅ Type-safe end-to-end API using tRPC
 - ✅ Modern UI with dark mode support and animations
 - ✅ Monorepo architecture for better code organization and sharing
+- ✅ Automated deployment using GitHub Actions
+- ✅ Backend deployed to Google Cloud Run
+- ✅ Frontend deployed to Netlify
 
 ## Tech Stack
 
@@ -24,6 +27,7 @@ This project is a full-stack application that manages user locations using OpenW
 - **APIs**: OpenWeatherMap API, Google Maps API
 - **Build Tools**: Turborepo, Vite
 - **Package Manager**: Bun
+- **Deployment**: GitHub Actions, Google Cloud Run, Netlify
 
 ## How to Run
 
@@ -71,6 +75,14 @@ bun dev
 ```
 
 This will start both the API and web application in development mode. The web application will be available at `http://localhost:5173` and the API at `http://localhost:3000`.
+
+## Live Deployment
+
+The application is deployed and available online:
+
+- **Frontend**: Deployed on Netlify with automatic deployment from the main branch
+- **Backend**: Deployed on Google Cloud Run with containerized deployment
+- **CI/CD**: GitHub Actions automatically builds and deploys both frontend and backend on every push to main
 
 ## Authentication
 
