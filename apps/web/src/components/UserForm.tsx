@@ -16,7 +16,7 @@ const UserForm = ({ user, onClose }: UserFormProps) => {
   const [zipCode, setZipCode] = useState('')
   const [errors, setErrors] = useState({ name: '', zipCode: '' })
 
-  const { getAuthInput, isAuthenticated } = useAuthenticatedTRPC()
+  const { isAuthenticated } = useAuthenticatedTRPC()
   const utils = trpc.useContext()
 
   useEffect(() => {
@@ -85,16 +85,16 @@ const UserForm = ({ user, onClose }: UserFormProps) => {
 
     try {
       if (user) {
-        await updateUser.mutateAsync(getAuthInput({
+        await updateUser.mutateAsync({
           id: user.id,
           name: name.trim(),
           zipCode: zipCode.trim(),
-        }))
+        })
       } else {
-        await createUser.mutateAsync(getAuthInput({
+        await createUser.mutateAsync({
           name: name.trim(),
           zipCode: zipCode.trim(),
-        }))
+        })
       }
     } catch (error) {
       console.error('Form submission error:', error)
@@ -108,7 +108,7 @@ const UserForm = ({ user, onClose }: UserFormProps) => {
     if (!confirmed) return
 
     try {
-      await deleteUser.mutateAsync(getAuthInput({ id: user.id }))
+      await deleteUser.mutateAsync({ id: user.id })
     } catch (error) {
       console.error('Delete error:', error)
     }

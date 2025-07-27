@@ -9,10 +9,10 @@ interface UserListProps {
 }
 
 const UserList = ({ onEditUser }: UserListProps) => {
-  const { withAuth, isAuthenticated } = useAuthenticatedTRPC()
+  const { isAuthenticated } = useAuthenticatedTRPC()
 
   const { data: users, isLoading } = trpc.users.getAll.useQuery(
-    withAuth({}),
+    undefined,
     { enabled: isAuthenticated }
   )
 

@@ -17,10 +17,10 @@ function App() {
   const [editingUser, setEditingUser] = useState<User | null>(null);
   
   const { user, loading, logout } = useAuth();
-  const { withAuth, isAuthenticated } = useAuthenticatedTRPC();
+  const { isAuthenticated } = useAuthenticatedTRPC();
 
   const { data: users = [] } = trpc.users.getAll.useQuery(
-    withAuth({}),
+    undefined,
     { enabled: isAuthenticated }
   );
 

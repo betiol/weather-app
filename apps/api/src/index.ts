@@ -30,7 +30,7 @@ const server = Bun.serve({
         endpoint: '/trpc',
         req,
         router: appRouter,
-        createContext: () => createContext(),
+        createContext: () => createContext({ req }),
       });
       
       Object.entries(corsHeaders).forEach(([key, value]) => {
