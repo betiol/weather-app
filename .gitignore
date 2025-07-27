@@ -142,3 +142,14 @@ dist
 .svelte-kit
 
 # End of https://www.toptal.com/developers/gitignore/api/node
+
+# TypeScript compiled files
+*.js
+*.d.ts
+*.d.ts.map
+
+# Except for config files
+!*.config.js
+!vite.config.ts
+!tailwind.config.js
+!postcss.config.js
