@@ -12,7 +12,6 @@ This project is a full-stack application that manages user locations using OpenW
 - ✅ Interactive map visualization of user locations using Google Maps
 - ✅ Real-time updates across all connected clients
 - ✅ Type-safe end-to-end API using tRPC
-- ✅ Modern UI with dark mode support and animations
 - ✅ Monorepo architecture for better code organization and sharing
 - ✅ Automated deployment using GitHub Actions
 - ✅ Backend deployed to Google Cloud Run
@@ -143,6 +142,37 @@ The project includes several types of tests:
    - Form validation
    - Authentication flows
    - Session management
+
+## Testing Done
+
+### What was tested and how:
+
+1. **API Endpoints Testing**:
+   - All CRUD operations (Create, Read, Update, Delete)
+   - Authentication middleware feature
+   - Error handling for invalid zip codes
+   - OpenWeatherMap API integration
+
+2. **Frontend features**:
+   - User registration and login flows
+   - Form validation (name and zip code fields)
+   - Real-time updates when users are added/edited/deleted
+   - Google Maps integration and marker display
+   - Responsive design across different screen sizes
+
+3. **Integration Testing**:
+   - End-to-end user creation workflow
+   - Geographic data fetching from zip codes
+   - Firebase Realtime Database operations
+   - tRPC client-server communication
+
+4. **Manual Testing Scenarios**:
+   - Created users with various zip codes (valid and invalid)
+   - Updated user information and verified re-fetching of location data
+   - Tested authentication flows (login, logout, session persistence)
+   - Verified real-time updates across multiple browser tabs
+   - Tested map interactions and marker clustering
+   - Cross-browser compatibility (Chrome, Firefox, Safari)
 
 ## Assumptions Made
 
