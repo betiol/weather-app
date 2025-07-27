@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus } from 'lucide-react';
+import { Toaster } from 'react-hot-toast';
 import { AuthPage } from './components/AuthPage';
 import Header from './components/Header';
 import UserList from './components/UserList';
@@ -100,6 +101,27 @@ function App() {
           )}
         </AnimatePresence>
       </motion.div>
+      
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#363636',
+            color: '#fff',
+          },
+          success: {
+            style: {
+              background: '#10b981',
+            },
+          },
+          error: {
+            style: {
+              background: '#ef4444',
+            },
+          },
+        }}
+      />
     </motion.div>
   );
 }

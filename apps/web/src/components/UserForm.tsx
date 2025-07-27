@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Save, Trash2, User as UserIcon, MapPin } from 'lucide-react'
+import toast from 'react-hot-toast'
 import { trpc } from '../utils/trpc'
 import { useAuthenticatedTRPC } from '../hooks/useAuthenticatedTRPC'
 import type { User } from '@weather/shared-types'
@@ -27,31 +28,37 @@ const UserForm = ({ user, onClose }: UserFormProps) => {
 
   const createUser = trpc.users.create.useMutation({
     onSuccess: () => {
+      toast.success('User created successfully!')
       utils.users.getAll.invalidate()
       onClose()
     },
     onError: (error) => {
       console.error('Failed to create user:', error)
+      toast.error(error.message || 'Failed to create user')
     },
   })
 
   const updateUser = trpc.users.update.useMutation({
     onSuccess: () => {
+      toast.success('User updated successfully!')
       utils.users.getAll.invalidate()
       onClose()
     },
     onError: (error) => {
       console.error('Failed to update user:', error)
+      toast.error(error.message || 'Failed to update user')
     },
   })
 
   const deleteUser = trpc.users.delete.useMutation({
     onSuccess: () => {
+      toast.success('User deleted successfully!')
       utils.users.getAll.invalidate()
       onClose()
     },
     onError: (error) => {
       console.error('Failed to delete user:', error)
+      toast.error(error.message || 'Failed to delete user')
     },
   })
 
